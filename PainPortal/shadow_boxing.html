@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Shadow Boxing Cat</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: url('images/boxing_ring.png') center/cover no-repeat fixed;
+      font-family: 'Arial', sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+    }
+
+    /* LEFT PANEL */
+    #leftPanel {
+      width: 30%;
+      padding: 20px;
+      text-align: left;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(3px);
+      border-right: 2px solid rgba(255,255,255,0.15);
+    }
+
+    #leftPanel h2 {
+      text-align: center;
+      color: #fff;
+      font-size: 36px;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 6px black;
+    }
+
+    #turnMessage {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      text-align: center;
+      color: #fff;
+      text-shadow: 2px 2px 5px #000;
+    }
+
+    .label, .small, .score-box {
+      color: #fff;
+      text-shadow: 1px 1px 4px black;
+    }
+
+    .label {
+      font-size: 20px;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+
+    .small {
+      font-size: 17px;
+      margin-bottom: 10px;
+      color: #ddd;
+    }
+
+    .score-box {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    /* CENTER PANEL */
+    #centerPanel {
+      width: 40%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #cat {
+      position: absolute;
+      max-width: 180px;
+      max-height: 180px;
+      object-fit: contain;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.2s ease;
+    }
+
+    /* RIGHT PANEL */
+    #rightPanel {
+      width: 30%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.35);
+      border-left: 2px solid rgba(255,255,255,0.15);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 80px 80px 80px;
+      grid-template-rows: 80px 80px 80px;
+      gap: 12px;
+    }
+
+    .btn {
+      font-size: 34px;
+      border: none;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transition: 0.15s;
+    }
+
+    .btn:hover {
+      background: white;
+      transform: scale(1.08);
+    }
+
+    .btn:active {
+      transform: scale(0.92);
+    }
+
+    .btn.disabled {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    #babyGif {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      width: 390px;
+      height: 200px;
+      z-index: 5;
+    }
+
+    #catGif {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 390px;
+      height: 200px;
+      z-index: 5;
+    }
+
+    /* POPUP */
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-box {
+      background: white;
+      border-radius: 20px;
+      padding: 30px 40px;
+      font-size: 28px;
+      text-align: center;
+      color: #222;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      animation: popIn 0.4s ease forwards;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ARCADE BUTTONS */
+    .arcade-btn {
+      width: 200px;
+      margin-top: 20px;
+      padding: 15px 20px;
+      border-radius: 14px;
+      font-size: 26px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      color: white;
+      text-shadow: 2px 2px 4px black;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+      animation: btnPop 0.25s ease;
+      transition: 0.15s;
+    }
+
+    .arcade-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(0,0,0,0.7);
+    }
+
+    .arcade-btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-win { background: hotpink; }
+    .btn-lose { background: purple; color: #fff; }
+
+    @keyframes btnPop {
+      0% { transform: scale(0.7); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="leftPanel">
+    <h2>Shadow Boxing Cat</h2>
+    <div id="turnMessage">Starting in 3…</div>
+
+    <div class="label">Your Health:</div>
+    <div id="playerHealth">❤️</div>
+
+    <div class="label">Cat Health:</div>
+    <div id="catHealth">❤️</div>
+
+    <div class="small" id="yourPick">You picked: —</div>
+    <div class="small" id="catPick">Cat picked: —</div>
+
+    <div class="score-box">
+      Your Score: <span id="playerScore">0</span> |
+      Cat Score: <span id="catScore">0</span>
+    </div>
+  </div>
+
+  <div id="centerPanel">
+    <img id="cat" src="images/cat_attack_forward.png">
+  </div>
+
+  <div id="rightPanel">
+    <div class="controls">
+      <div></div>
+      <button class="btn" data-dir="up" onclick="playerChoose('up')">⬆️</button>
+      <div></div>
+
+      <button class="btn" data-dir="left" onclick="playerChoose('left')">⬅️</button>
+      <button class="btn" data-dir="down" onclick="playerChoose('down')">⬇️</button>
+      <button class="btn" data-dir="right" onclick="playerChoose('right')">➡️</button>
+
+      <div></div><div></div><div></div>
+    </div>
+  </div>
+
+  <!-- POPUP -->
+  <div id="popupOverlay" class="popup-overlay">
+    <div id="popupBox" class="popup-box"></div>
+  </div>
+
+<script>
+  let playerTurn = true;
+  let streak = 0;
+  let disabledDirections = [];
+
+  const directions = ["up", "down", "left", "right"];
+  const arrows = { up:"⬆️", down:"⬇️", left:"⬅️", right:"➡️" };
+
+  let playerHP = 1;
+  let catHP = 1;
+
+  let buttonsLocked = false;
+  let countdownInterval = null;
+
+  function updateDisabledButtons() {
+    document.querySelectorAll(".btn").forEach(btn => {
+      btn.classList.toggle("disabled",
+        disabledDirections.includes(btn.dataset.dir)
+      );
+    });
+  }
+
+  function resetDisabledDirections() {
+    disabledDirections = [];
+    updateDisabledButtons();
+  }
+
+  function setAttackImage(dir) {
+    document.getElementById("cat").src =
+      "images/cat_attack_" + (dir || "forward") + ".png";
+  }
+
+  function setDefendImage(dir) {
+    document.getElementById("cat").src =
+      "images/cat_defend_" + (dir || "forward") + ".png";
+  }
+
+  function moveCat(dir) {
+    const cat = document.getElementById("cat");
+    let X = 0, Y = 0;
+    if (dir === "up") Y = -40;
+    if (dir === "down") Y = 40;
+    if (dir === "left") X = -40;
+    if (dir === "right") X = 40;
+    cat.style.transform = `translate(calc(-50% + ${X}px), calc(-50% + ${Y}px))`;
+    setTimeout(() => {
+      cat.style.transform = "translate(-50%, -50%)";
+    }, 250);
+  }
+
+  function freezeSprite(time = 600) {
+    buttonsLocked = true;
+    setTimeout(() => { buttonsLocked = false; }, time);
+  }
+
+  function showPopup(message, redirectURL, isWin) {
+    const overlay = document.getElementById("popupOverlay");
+    const box = document.getElementById("popupBox");
+
+    box.innerHTML = `
+      ${message}<br><br>
+      <button class="arcade-btn ${isWin ? 'btn-win' : 'btn-lose'}"
+        onclick="window.location.href='${redirectURL}'">
+        ${isWin ? 'YAY!!' : 'NOOOO!!!'}
+      </button>
+    `;
+
+    overlay.style.display = "flex";
+    buttonsLocked = true; // stop further input
+  }
+
+  function dealDamage(toCat) {
+    if (toCat) catHP--;
+    else playerHP--;
+
+    document.getElementById("playerHealth").innerHTML = "❤️".repeat(playerHP);
+    document.getElementById("catHealth").innerHTML = "❤️".repeat(catHP);
+
+    if (catHP <= 0) {
+      showPopup(
+        "You beat the cat so you might just be human",
+        "timer.html",
+        true
+      );
+      return;
+    }
+
+    if (playerHP <= 0) {
+      showPopup(
+        "You lost and you are not a human",
+        "login.html",
+        false
+      );
+      return;
+    }
+  }
+
+  function showPicks(p, c) {
+    document.getElementById("yourPick").textContent = "You picked: " + arrows[p];
+    document.getElementById("catPick").textContent = "Cat picked: " + arrows[c];
+  }
+
+  function startCountdown(seconds) {
+    buttonsLocked = true;
+    let time = seconds;
+
+    const msg = document.getElementById("turnMessage");
+    const prefix = playerTurn ? "Your turn in " : "Cat attacks in ";
+
+    msg.textContent = prefix + time;
+
+    countdownInterval = setInterval(() => {
+      time--;
+      if (time > 0) {
+        msg.textContent = prefix + time;
+      } else {
+        clearInterval(countdownInterval);
+        buttonsLocked = false;
+        msg.textContent = playerTurn
+          ? "Your turn — pick a direction"
+          : "Cat’s turn — defend!";
+        updateDisabledButtons();
+      }
+    }, 1000);
+  }
+
+  function playerChoose(dir) {
+    if (buttonsLocked) return;
+    if (playerTurn) handlePlayerAttack(dir);
+    else handlePlayerDefense(dir);
+  }
+
+  /* PLAYER ATTACK TURN */
+  function handlePlayerAttack(playerDir) {
+    // cat respects disabled directions
+    let allowed = directions.filter(d => !disabledDirections.includes(d));
+    if (allowed.length === 0) allowed = directions.slice();
+
+    const catChoice = allowed[Math.random() * allowed.length | 0];
+
+    showPicks(playerDir, catChoice);
+    setAttackImage(catChoice);
+    moveCat(catChoice);
+    freezeSprite();
+
+    if (playerDir === catChoice) {
+      if (!disabledDirections.includes(playerDir))
+        disabledDirections.push(playerDir);
+
+      streak++;
+
+      if (streak === 3) {
+        dealDamage(true);
+        streak = 0;
+        resetDisabledDirections();
+        playerTurn = false;
+      } else {
+        playerTurn = true;
+      }
+
+    } else {
+      streak = 0;
+      resetDisabledDirections();
+      playerTurn = false;
+    }
+
+    setTimeout(() => startCountdown(3), 600);
+  }
+
+  /* CAT ATTACK TURN */
+  function handlePlayerDefense(playerDir) {
+    let allowed = directions.filter(d => !disabledDirections.includes(d));
+    if (allowed.length === 0) allowed = directions.slice();
+
+    const catDir = allowed[Math.random() * allowed.length | 0];
+
+    showPicks(playerDir, catDir);
+    setDefendImage(catDir);
+    moveCat(catDir);
+    freezeSprite();
+
+    if (playerDir === catDir) {
+      if (!disabledDirections.includes(catDir))
+        disabledDirections.push(catDir);
+
+      streak++;
+
+      if (streak === 3) {
+        dealDamage(false);
+        streak = 0;
+        resetDisabledDirections();
+        playerTurn = true;
+      } else {
+        playerTurn = false;
+      }
+
+    } else {
+      streak = 0;
+      resetDisabledDirections();
+      playerTurn = true;
+    }
+
+    setTimeout(() => startCountdown(3), 600);
+  }
+
+  resetDisabledDirections();
+  startCountdown(3);
+</script>
+
+<img id="babyGif" src="images/baby.gif">
+<img id="catGif" src="images/cat.gif">
+
+</body>
+</html>

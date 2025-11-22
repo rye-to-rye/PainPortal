@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Congratulations...</title>
+
+<style>
+  body {
+    background: #ffffff;
+    color: #222222;
+    font-family: "Courier New", monospace;
+    text-align: center;
+    padding-top: 80px;
+  }
+
+  /* BIG CONGRATS */
+  h1 {
+    font-size: 68px;
+    margin-bottom: 10px;
+    color: #111111;
+    font-weight: bold;
+  }
+
+  /* TEXT ABOVE TIMER — NOW MUCH BIGGER */
+  p {
+    font-size: 22px;
+    margin-bottom: 20px;
+    opacity: 0.6;
+  }
+
+  /* TIMER — NOW MUCH SMALLER */
+  .timer {
+    font-size: 10px;
+    color: #00994d;
+    background: #ffffff;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #004d26;
+    box-shadow: 0 0 4px #004d26;
+    letter-spacing: 2px;
+    margin-top: 15px;
+    font-weight: 600;
+    animation: flicker 1.9s infinite;
+  }
+
+  @keyframes flicker {
+    0% { opacity: 1; }
+    40% { opacity: 0.93; }
+    42% { opacity: 1; }
+    48% { opacity: 0.85; }
+    55% { opacity: 1; }
+    100% { opacity: 0.97; }
+  }
+
+  .hourglass {
+    font-size: 28px;
+    margin-top: 10px;
+    opacity: 0.6;
+    animation: drain 4s infinite;
+  }
+
+  @keyframes drain {
+    0% { opacity: 0.2; transform: translateY(0px); }
+    50% { opacity: 1; transform: translateY(3px); }
+    100% { opacity: 0.2; transform: translateY(0px); }
+  }
+
+  .note {
+    margin-top: 10px;
+    font-size: 10px;
+    opacity: 0.4;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>CONGRATULATIONS</h1>
+
+<p>You logged in. Please wait as we redirect you :D</p>
+
+<div id="timerDisplay" class="timer">000y 000w 00d 00h 00m 00s</div>
+
+<div class="hourglass">⏳</div>
+
+<div class="note">Yeaaa... my fault this is gonna take a minute.</div>
+
+<script>
+  const now = new Date();
+
+  const target = new Date(
+    now.getFullYear() + 266,
+    now.getMonth(),
+    now.getDate() + 24 + (18 * 7),
+    now.getHours() + 4,
+    now.getMinutes() + 15,
+    now.getSeconds() + 49
+  );
+
+  function updateTimer() {
+    const current = new Date();
+    let diff = Math.floor((target - current) / 1000);
+    if (diff < 0) diff = 0;
+
+    const years = Math.floor(diff / (60 * 60 * 24 * 365));
+    diff -= years * 60 * 60 * 24 * 365;
+
+    const weeks = Math.floor(diff / (60 * 60 * 24 * 7));
+    diff -= weeks * 60 * 60 * 24 * 7;
+
+    const days = Math.floor(diff / (60 * 60 * 24));
+    diff -= days * 60 * 60 * 24;
+
+    const hours = Math.floor(diff / 3600);
+    diff -= hours * 3600;
+
+    const minutes = Math.floor(diff / 60);
+    diff -= minutes * 60;
+
+    const seconds = diff;
+
+    const display =
+      String(years).padStart(3, '0') + "y " +
+      String(weeks).padStart(3, '0') + "w " +
+      String(days).padStart(2, '0') + "d " +
+      String(hours).padStart(2, '0') + "h " +
+      String(minutes).padStart(2, '0') + "m " +
+      String(seconds).padStart(2, '0') + "s";
+
+    document.getElementById("timerDisplay").textContent = display;
+  }
+
+  updateTimer();
+  setInterval(updateTimer, 1000);
+</script>
+
+</body>
+</html>

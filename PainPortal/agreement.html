@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Human Verification (Terrible Edition)</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: "Comic Sans MS", Papyrus, cursive;
+    background: linear-gradient(45deg, #ff00ff, #00ffff, #ff0000);
+    animation: seizure 0.4s infinite alternate;
+  }
+
+  @keyframes seizure {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(180deg); }
+  }
+
+  .box {
+    width: 93%;
+    margin: 3px auto;
+    background: #f7ff00;
+    padding: 9px;
+    border-radius: 2px;
+    border: 7px dashed #ff00aa;
+    box-shadow: 0 0 40px lime;
+    transform: rotate(1.4deg);
+  }
+
+  h1 {
+    font-size: 53px;
+    color: #0044ff;
+    text-shadow: 4px 4px 0px red;
+    letter-spacing: -3px;
+  }
+
+  .cat img {
+    width: 300px;
+    height: 80px;
+    object-fit: fill;
+    transform: rotate(-7deg);
+    filter: contrast(300%) brightness(200%);
+    border: 5px solid purple;
+  }
+
+  .explain {
+    font-size: 22px;
+    line-height: 0.9;
+    color: #990099;
+    background: #00ff88;
+    padding: 8px;
+    border: 3px dotted #000;
+    transform: rotate(-1deg);
+  }
+
+  /* FLASHING CAMOUFLAGED CHECKBOX COLORS */
+  @keyframes blendFlash {
+    0%   { background-color: #f7ff00; border-color: #e6ff59; }
+    25%  { background-color: #e6ff59; border-color: #d9ff72; }
+    50%  { background-color: #d9ff72; border-color: #cfff80; }
+    75%  { background-color: #cfff80; border-color: #f0ff66; }
+    100% { background-color: #f0ff66; border-color: #f7ff00; }
+  }
+
+  /* CUSTOM FLASHING CHECKBOX (NO WHITE ANYMORE) */
+  .fake-check {
+    width: 15px;
+    height: 15px;
+    border: 3px solid #e6ff59;
+    cursor: pointer;
+    transform: rotate(30deg);
+    animation: blendFlash 0.4s infinite;
+  }
+
+  /* When clicked */
+  .fake-check.checked {
+    border-color: red !important;
+    background: rgba(255, 0, 0, 0.6) !important;
+    box-shadow: 0 0 20px red;
+  }
+
+  /* Checkbox and text row */
+  .agree-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 60px;
+    margin-bottom: 30px;
+  }
+
+  #continueBtn {
+    padding: 20px 60px;
+    font-size: 40px;
+    background: repeating-linear-gradient(
+      45deg,
+      red,
+      red 10px,
+      yellow 10px,
+      yellow 20px
+    );
+    color: white;
+    border: 10px ridge green;
+    cursor: pointer;
+    opacity: 0.3;
+  }
+
+  #continueBtn.active {
+    opacity: 1;
+    filter: drop-shadow(0 0 20px red);
+    animation: wobble 0.3s infinite;
+  }
+
+  @keyframes wobble {
+    0% { transform: rotate(2deg); }
+    50% { transform: rotate(-2deg); }
+    100% { transform: rotate(2deg); }
+  }
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h1>Human Verification Check</h1>
+  <p style="font-size:28px; color:#ff0099; margin-top:-10px;">
+    Beat this cat in shadow boxing or else.
+  </p>
+
+  <div class="cat">
+    <img src="images/cat.png">
+  </div>
+
+  <div class="explain">
+    Yea I'm not gonna lie I don't really know how to play this game too well but imma try to explain it. Basically you gotta make it so that the cat looks in the same direction you point to I think?
+    Oh and you also gotta not look in the direction the cat points. Anyways good luck imma take 5 and grab a cookie from subway.
+  </div>
+
+  <div class="agree-container">
+    <label for="agreeBox" style="font-size:30px; color:#ff3300; transform:rotate(-8deg);">
+      Check this box to agree to the conditions and rules of this game
+    </label>
+
+    <!-- CUSTOM FLASHING CHECKBOX -->
+    <div id="agreeBox" class="fake-check"></div>
+  </div>
+
+  <button id="continueBtn" onclick="goNext()">CONTINUE???</button>
+</div>
+
+<script>
+  const agreeBox = document.getElementById("agreeBox");
+  const continueBtn = document.getElementById("continueBtn");
+
+  let checked = false;
+
+  agreeBox.addEventListener("click", () => {
+    checked = !checked;
+    agreeBox.classList.toggle("checked");
+
+    if (checked) {
+      continueBtn.classList.add("active");
+    } else {
+      continueBtn.classList.remove("active");
+    }
+  });
+
+  function goNext() {
+    if (!checked) {
+      alert("BRO CHECK THE BOX PLEASE 💀 I DON'T WANNA BE HERE ANYMORE THAN YOU DO I ALSO WANNA GRAB A COOKIE FROM SUBWAY");
+      return;
+    }
+    window.location.href = "shadow_boxing.html";
+  }
+</script>
+
+</body>
+</html>
