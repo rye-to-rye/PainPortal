@@ -42,7 +42,7 @@ We wanted to push UX to its breaking point and explore how far someone will go t
 
 ## How to Run
 
-Clone the repo and open the main HTML file:
+Clone the repo and open the main HTML file which is **login.html**:
 
 ```bash
 git clone https://github.com/your-username/painportal.git
